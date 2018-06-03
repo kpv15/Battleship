@@ -55,6 +55,7 @@ class Game(object):
             print("restart game")
         elif self.my_map.is_pressed(poss):
             self.my_map.pressed(poss)
+            print("xd")
         elif self.cpu_map.is_pressed(poss):
             self.cpu_map.pressed(poss)
 
@@ -68,7 +69,6 @@ class Game(object):
 
     #START GAME
     def start(self):
-
         pass
 
     #ENDING PROGRAM

@@ -21,9 +21,13 @@ class Board(object):
         pygame.draw.rect(self.screen,color,self.rect)
         for i in self.tab:
             for j in i:
-                j.draw()
+                j.draw((30,50,255))
 
     def is_pressed(self,poss):
+        for i in self.tab:
+            for j in i:
+                if j.is_pressed(poss) == True:
+                    return True
         return False
 
     def pressed(self,poss):
