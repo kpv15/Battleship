@@ -9,8 +9,8 @@ class Button():
         #TODO check size of text vs size of rect
 
     def draw(self):
-        pygame.draw.rect(self.screen,(50,10,80),self.rect)
-        self.screen.blit(self.text,(self.rect.x,self.rect.y))
+        pygame.draw.rect(self.screen,(20, 5, 150),self.rect)
+        self.screen.blit(self.text,(self.rect.x+5,self.rect.y+5))
 
     def is_pressed(self,poss):
         if self.rect.left < poss[0] <self.rect.right and self.rect.top<poss[1]<self.rect.bottom:
