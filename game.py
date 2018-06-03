@@ -6,9 +6,10 @@ class Game(object):
     def __init__(self):
         #INITIALIZATION
         pygame.init()
-        self.screen = pygame.display.set_mode(( 800, 600 ))
-        self.start_button = Button((5,5,80,40),self.screen,"Start",29)
-        self.restart_button = Button((100, 5, 80, 40), self.screen, "Restart",29)
+        size = (800,600)
+        self.screen = pygame.display.set_mode(( 800, 500 ))
+        self.start_button = Button((10,10,100,50),self.screen,"Start",33)
+        self.restart_button = Button((120, 10, 100, 50), self.screen, "Restart",33)
 
         self.restart()
         #self.screen.blit(Button)
@@ -20,7 +21,7 @@ class Game(object):
             self.event()
 
             #DISPLAYING
-            self.screen.fill((0,0,0))
+            self.screen.fill((0,0,50))
             self.drawn()
             pygame.display.flip()
 
@@ -48,8 +49,10 @@ class Game(object):
         print(poss)
         if self.start_button.is_pressed(poss):
             self.start()
+            print("start game")
         elif self.restart_button.is_pressed(poss):
             self.restart()
+            print("restart game")
         elif self.my_map.is_pressed(poss):
             self.my_map.pressed(poss)
         elif self.cpu_map.is_pressed(poss):
@@ -57,8 +60,10 @@ class Game(object):
 
     #RESTART GAME
     def restart(self):
-        self.my_map = Board()
-        self.cpu_map = Board()
+        size = self.screen.get_size()
+        y = ((size[1]-70)-size[0]/2)/2+70
+        self.my_map = Board((5,y,size[0]/2-10,size[0]/2-10),self.screen)
+        self.cpu_map = Board((size[0]/2+5,y,size[0]/2-10,size[0]/2-10),self.screen)
         pass
 
     #START GAME
