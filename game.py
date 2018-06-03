@@ -6,25 +6,20 @@ class Game(object):
     def __init__(self):
         #INITIALIZATION
         pygame.init()
-        self.TPS = 20.0
         self.screen = pygame.display.set_mode(( 800, 600 ))
-        self.delta = 0.0
-        self.clock = pygame.time.Clock()
-        self.my_map = Board()
-        self.cpu_map = Board()
         self.start_button = Button((5,5,80,40),self.screen,"Start",29)
         self.restart_button = Button((100, 5, 80, 40), self.screen, "Restart",29)
+
+        self.restart()
         #self.screen.blit(Button)
 
         #main loop
         while True:
+
+            #HANDLING EVENT
             self.event()
 
-            self.delta += self.clock.tick()
-            while self.delta > self.TPS :
-                self.delta -= self.TPS
-                self.tick()
-
+            #DISPLAYING
             self.screen.fill((0,0,0))
             self.drawn()
             pygame.display.flip()
@@ -40,10 +35,6 @@ class Game(object):
         elif ev.type == pygame.MOUSEBUTTONDOWN:
             self.ms_click(pygame.mouse.get_pos())
 
-    #TICKING HANDLING
-    def tick(self):
-        pass
-
     #RENDERING HANDLING
     def drawn(self):
         self.start_button.draw()
@@ -55,6 +46,25 @@ class Game(object):
     #MOUSE CLICK HANDLING
     def ms_click(self,poss):
         print(poss)
+        if self.start_button.is_pressed(poss):
+            self.start()
+        elif self.restart_button.is_pressed(poss):
+            self.restart()
+        elif self.my_map.is_pressed(poss):
+            self.my_map.pressed(poss)
+        elif self.cpu_map.is_pressed(poss):
+            self.cpu_map.pressed(poss)
+
+    #RESTART GAME
+    def restart(self):
+        self.my_map = Board()
+        self.cpu_map = Board()
+        pass
+
+    #START GAME
+    def start(self):
+
+        pass
 
     #ENDING PROGRAM
     def end(self):
