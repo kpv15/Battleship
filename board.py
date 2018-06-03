@@ -1,4 +1,5 @@
 import pygame
+from random import randint
 from box import Box
 from ship import Ship
 
@@ -45,12 +46,18 @@ class Board(object):
                     self.init += 1
                     if self.init == len(self.ships_list):
                         self.msg.set("ustawiono wszystkie okręty")
+                        return False
+        return True
 
-    def set_ships(self):
-        for i in self.ships_list:
-            self.msg.set('wybierz pozycje ' + str(i.size) + ' masztowca')
-            print(i.size, end=',')
-            print('wybierz pozycje ' + str(i.size) + ' masztowca')
+    def cpu_set_ship(self):
+        flag = True
+        i = 0
+        while flag and i < 10000:
+            self.last_pressed = randint(0,box_number-1),randint(0,box_number-1)
+            print(self.last_pressed)
+            flag = self.set_ship_pressed()
+            i+=1
+        if i == 10000: print("error") #TODO ACTION WHEN ERROR
 
     def draw(self, ships=False):
         pygame.draw.rect(self.screen, color, self.rect)

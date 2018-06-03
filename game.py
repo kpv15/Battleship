@@ -88,13 +88,13 @@ class Game(object):
     # START GAME
     def start(self):
         self.start_flag = True
+        self.cpu_map.cpu_set_ship()
         self.msg_box.set("Game started")
 
     # ENDING PROGRAM
     def end(self):
         pygame.quit()
         sys.exit()
-
 
 if __name__ == "__main__":
     Game()
