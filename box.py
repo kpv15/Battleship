@@ -18,10 +18,13 @@ class Box(object):
         self.cords = cords
 
     def draw(self, ship_hide=False):
-        if self.status == BoxStatus.FREE or ship_hide:
+        if self.status == BoxStatus.FREE:
             pygame.draw.rect(self.screen, (30, 50, 255), self.rect)
         elif self.status == BoxStatus.SHIP:
-            pygame.draw.rect(self.screen, (60, 50, 10), self.rect)
+            if ship_hide:
+                pygame.draw.rect(self.screen, (30, 50, 255), self.rect)
+            else:
+                pygame.draw.rect(self.screen, (60, 50, 10), self.rect)
         elif self.status == BoxStatus.MISS:
             pygame.draw.rect(self.screen, (70, 70, 140), self.rect)
         elif self.status == BoxStatus.HIT:

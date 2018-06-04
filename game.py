@@ -30,14 +30,13 @@ class Game(object):
         self.win = False
 
         while True:
-             self.restart()
-             if self.main_loop():
-                 print("victory")
-             else:
-                 print("defeat")
+            self.restart()
+            if self.main_loop():
+                print("zwyciestwo")
+            else:
+                print("porażka")
 
-
-    #main part of game return True if win or False if defeat
+    # main part of game return True if win or False if defeat
     def main_loop(self):
         # main loop
         while True:
@@ -48,16 +47,16 @@ class Game(object):
                     self.my_map.set_ship()
 
                 if self.player_map_pressed_flag:
-                   # self.my_map.set_ship_pressed()
+                    self.my_map.set_ship_pressed()
                     self.player_map_pressed_flag = False
-                   #auto set plaer ships for test
-                    self.my_map.cpu_set_ship()
+                    # auto set player ships for test
+                    # self.my_map.cpu_set_ship()
 
             # after start
             elif self.state == GameState.PLAYING:
                 if self.player_move:
                     # player move
-                    self.msg_box.set("Your move")
+                    self.msg_box.set("Twój ruch")
                     if self.cpu_map_pressed_flag:
                         if not self.cpu_map.player_shoot():
                             self.player_move = False
@@ -69,7 +68,7 @@ class Game(object):
                         self.cpu_map_pressed_flag = False
                 else:
                     # cpu move
-                    self.msg_box.set("cpu think")
+                    self.msg_box.set("przeciwnik myśli")
 
                     if not self.my_map.cpu_shoot():
                         self.player_move = True
@@ -78,10 +77,11 @@ class Game(object):
                         self.win = False
                         self.state = GameState.END
             elif self.state == GameState.END:
+                self.msg_box2.set("Bitwa zakończona")
                 if self.win:
-                    self.msg_box.set("victory")
+                    self.msg_box.set("Zwycięstwo!!!")
                 else:
-                    self.msg_box.set("defeat")
+                    self.msg_box.set("Porażka!!!")
 
             # EVENTS HANDLING
             self.event()
@@ -108,20 +108,24 @@ class Game(object):
         self.start_button.draw()
         self.restart_button.draw()
         self.my_map.draw()
-        self.cpu_map.draw(ships_hide=False)
+        if self.state != GameState.END:
+            self.cpu_map.draw(ships_hide=True)
+        else:
+            self.cpu_map.draw(ships_hide=False)
         self.msg_box.draw()
         self.msg_box2.draw()
 
     # MOUSE CLICK HANDLING
     def ms_click(self, poss):
-        #print(poss)
+        # print(poss)
         if self.start_button.is_pressed(poss):
             self.start()
         elif self.restart_button.is_pressed(poss):
             self.restart()
         elif self.my_map.is_pressed(poss) and self.state == GameState.SETTING:  # ACTION WHEN PLAYER BOARD PRESSED
             self.player_map_pressed_flag = True
-        elif self.cpu_map.is_pressed(poss)and self.state == GameState.PLAYING:      # ACTION WHEN CPU BOARD PRESSED
+        elif self.cpu_map.is_pressed(poss) and self.state == GameState.PLAYING\
+                and self.player_move:  # ACTION WHEN CPU BOARD PRESSED
             self.cpu_map_pressed_flag = True
 
         # elif self.my_map.is_pressed(poss):
@@ -136,21 +140,21 @@ class Game(object):
         self.my_map = Board((5, y, size[0] / 2 - 10, size[0] / 2 - 10), self.screen, self.msg_box)
         self.cpu_map = Board((size[0] / 2 + 5, y, size[0] / 2 - 10, size[0] / 2 - 10), self.screen, self.msg_box)
         self.state = GameState.SETTING
-        self.msg_box2.set("Game restarted")
+        self.msg_box2.set("Gra zrestartowana")
 
     # START GAME
-    def start(self) :
+    def start(self):
         if self.my_map.ready and self.state == GameState.SETTING:
             self.state = GameState.PLAYING
+            self.msg_box.set("przeciwnik rozstawia swoje jednostki")
             self.cpu_map.cpu_set_ship()
-            self.msg_box2.set("Game started")
-            pygame.time.wait(1000)
+            self.msg_box2.set("Bitwa rozpoczęta")
             self.player_move = bool(getrandbits(1))
-            #print(self.player_move)
+            # print(self.player_move)
         elif not self.my_map.ready and self.state == GameState.SETTING:
             self.msg_box.set("Ustaw wszystkie okręty przed bitwą!!!")
         elif self.state == GameState.PLAYING:
-            self.msg_box.set_tmp("Bitwa już trwa!!!",1000)
+            self.msg_box.set_tmp("Bitwa już trwa!!!", 1000)
 
     # ENDING PROGRAM
     def end(self):

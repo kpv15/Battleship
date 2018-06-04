@@ -1,7 +1,5 @@
 import pygame
 
-dt = 2000.0
-
 
 class TextBox(object):
     def __init__(self, poss, screen, text, font_size):
