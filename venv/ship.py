@@ -12,16 +12,18 @@ class Ship(object):
     def set(self):
         pass
 
-    def add(self, box,list):
-        x,y = box.cords
+    def add(self, box, list):
+        x, y = box.cords
         for i in list:
-            if (x-1,y) == i.cords or i.cords == (x + 1, y) or i.cords == (x, y - 1) or i.cords == (x, y + 1) or\
-            (x - 1, y-1) == i.cords or i.cords == (x - 1, y + 1) or i.cords == (x + 1, y + 1) or i.cords == (x + 1, y - 1):
+            if (x - 1, y) == i.cords or i.cords == (x + 1, y) or i.cords == (x, y - 1) or i.cords == (x, y + 1) or \
+                    (x - 1, y - 1) == i.cords or i.cords == (x - 1, y + 1) or i.cords == (x + 1, y + 1) or i.cords == (
+            x + 1, y - 1):
                 if i.status == 1:
                     for j in self.parts:
-                        if j== i : break
-                    else: return False
-        #print("x")
+                        if j == i: break
+                    else:
+                        return False
+        # print("x")
         if len(self.parts) == 0:
             self.parts.append(box)
             box.status = 1

@@ -1,12 +1,12 @@
 import pygame
 
 
-class Button():
+class Button(object):
     def __init__(self, poss, screen, text, font_size):
         self.screen = screen
         self.rect = pygame.Rect(poss)
         self.text = pygame.font.SysFont("arial", font_size).render(text, 1, (0, 200, 100))
-        print(self.rect.bottom)
+        #print(self.rect.bottom)
         # TODO check size of text vs size of rect
 
     def draw(self):

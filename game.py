@@ -4,6 +4,7 @@ from board import Board
 from button import Button
 from textbox import TextBox
 
+
 class Game(object):
     def __init__(self):
         # INITIALIZATION
@@ -15,8 +16,9 @@ class Game(object):
 
         size = self.screen.get_size()
         self.msg_box = TextBox((0, size[1] - 60, size[0], 50), self.screen, "", 33)
-        self.msg_box2 = TextBox((size[0]-250, 0 , 250, 50), self.screen, "xD", 33)
+        self.msg_box2 = TextBox((size[0] - 250, 0, 250, 50), self.screen, "xD", 33)
         self.player_move = True
+        self.player_map_pressed_flag = False
 
         self.restart()
         # self.screen.blit(Button)
@@ -27,11 +29,24 @@ class Game(object):
             if not self.start_flag:
                 if self.my_map.need_action:
                     self.my_map.set_ship()
+                if self.player_map_pressed_flag:
+                    self.my_map.set_ship_pressed()
+                    self.player_map_pressed_flag = False
 
             # after start
             else:
+                # player move
                 if self.player_move:
                     self.msg_box.set("Your move")
+                if self.player_map_pressed_flag:
+                    if not self.my_map.player_shoot():
+                        self.player_move = False
+                    self.player_map_pressed_flag = False
+                # cpu move
+                else:
+                    self.msg_box.set("cpu think")
+                    if not self.cpu_map.cpu_shoot():
+                        self.player_move = True
 
             # EVENTS HANDLING
             self.event()
@@ -64,15 +79,13 @@ class Game(object):
 
     # MOUSE CLICK HANDLING
     def ms_click(self, poss):
-        print(poss)
+        #print(poss)
         if self.start_button.is_pressed(poss):
             self.start()
         elif self.restart_button.is_pressed(poss):
             self.restart()
-        elif self.my_map.is_pressed(poss) and self.start_flag != True:
-            self.my_map.set_ship_pressed()
-            print(self.my_map.last_pressed)
-
+        elif self.my_map.is_pressed(poss):  # ACTION WHEN PLAYER BOARD PRESSED
+            self.player_map_pressed_flag = True
         # elif self.my_map.is_pressed(poss):
         #   self.my_map.pressed(poss)
         # elif self.cpu_map.is_pressed(poss):
@@ -95,7 +108,7 @@ class Game(object):
             self.msg_box2.set("Game started")
             pygame.time.wait(1000)
             self.player_move = bool(getrandbits(1))
-            print( self.player_move )
+            #print(self.player_move)
         else:
             self.msg_box.set("Ustaw wszystkie okręty przed bitwą!!!")
 
@@ -103,6 +116,7 @@ class Game(object):
     def end(self):
         pygame.quit()
         sys.exit()
+
 
 if __name__ == "__main__":
     Game()
