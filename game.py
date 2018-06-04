@@ -1,8 +1,8 @@
 import pygame, sys
+from random import getrandbits
 from board import Board
 from button import Button
 from textbox import TextBox
-
 
 class Game(object):
     def __init__(self):
@@ -15,6 +15,8 @@ class Game(object):
 
         size = self.screen.get_size()
         self.msg_box = TextBox((0, size[1] - 60, size[0], 50), self.screen, "", 33)
+        self.msg_box2 = TextBox((size[0]-250, 0 , 250, 50), self.screen, "xD", 33)
+        self.player_move = True
 
         self.restart()
         # self.screen.blit(Button)
@@ -22,17 +24,16 @@ class Game(object):
         # main loop
         while True:
             # after restart setting ships
-            if self.start_flag != True:
-                self.my_map.set_ship()
-                pass
+            if not self.start_flag:
+                if self.my_map.need_action:
+                    self.my_map.set_ship()
 
             # after start
             else:
-                pass
+                if self.player_move:
+                    self.msg_box.set("Your move")
 
-                # HANDLING EVENT IN GAME
-
-            # NECESSARY EVENTS HANDLING
+            # EVENTS HANDLING
             self.event()
 
             # DISPLAYING
@@ -57,8 +58,9 @@ class Game(object):
         self.start_button.draw()
         self.restart_button.draw()
         self.my_map.draw()
-        self.cpu_map.draw()
+        self.cpu_map.draw(ships_hide=True)
         self.msg_box.draw()
+        self.msg_box2.draw()
 
     # MOUSE CLICK HANDLING
     def ms_click(self, poss):
@@ -83,13 +85,19 @@ class Game(object):
         self.my_map = Board((5, y, size[0] / 2 - 10, size[0] / 2 - 10), self.screen, self.msg_box)
         self.cpu_map = Board((size[0] / 2 + 5, y, size[0] / 2 - 10, size[0] / 2 - 10), self.screen, self.msg_box)
         self.start_flag = False
-        self.msg_box.set("Game restarted")
+        self.msg_box2.set("Game restarted")
 
     # START GAME
     def start(self):
-        self.start_flag = True
-        self.cpu_map.cpu_set_ship()
-        self.msg_box.set("Game started")
+        if self.my_map.ready:
+            self.start_flag = True
+            self.cpu_map.cpu_set_ship()
+            self.msg_box2.set("Game started")
+            pygame.time.wait(1000)
+            self.player_move = bool(getrandbits(1))
+            print( self.player_move )
+        else:
+            self.msg_box.set("Ustaw wszystkie okręty przed bitwą!!!")
 
     # ENDING PROGRAM
     def end(self):

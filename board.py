@@ -17,6 +17,8 @@ class Board(object):
         self.box_with = self.rect.width / box_number
         self.msg = msg
         self.last_pressed = None
+        self.ready = False
+        self.need_action =True
         print(self.box_with)
         self.tab = [Box((self.rect.left + space_width / 2 + col * self.box_with,
                          self.rect.top + space_width / 2 + row * self.box_with,
@@ -26,14 +28,19 @@ class Board(object):
         print(self.tab)
         self.ships_list = [Ship(5 - i) for i in range(1, 5) for j in range(i)]
         self.init = 0
+        self.s_num = 1
+        self.prev_size_last = self.ships_list[self.init].size
 
     def set_ship(self):
         if self.init != len(self.ships_list):
-            self.msg.set('wybierz pozycje ' + str(self.ships_list[self.init].size) + ' masztowca')
-
-    # print('wybierz pozycje '+str(self.ships_list[self.init].size)+' masztowca')
+            if self.prev_size_last != self.ships_list[self.init].size:
+                self.s_num = 1
+            self.msg.set('wybierz pozycje '+ str(self.s_num) + '-ego ' + str(self.ships_list[self.init].size) + ' masztowca')
+            self.prev_size_last = self.ships_list[self.init].size
+        self.need_action = False
 
     def set_ship_pressed(self):
+        self.need_action = True
         if self.init != len(self.ships_list):
             for i in self.tab:
                 if i.cords == self.last_pressed:
@@ -44,8 +51,10 @@ class Board(object):
                 self.ships_list[self.init].add(b,self.tab)
                 if self.ships_list[self.init].full():
                     self.init += 1
+                    self.s_num += 1
                     if self.init == len(self.ships_list):
                         self.msg.set("ustawiono wszystkie okręty")
+                        self.ready = True
                         return False
         return True
 
@@ -57,12 +66,13 @@ class Board(object):
             print(self.last_pressed)
             flag = self.set_ship_pressed()
             i+=1
-        if i == 10000: print("error") #TODO ACTION WHEN ERROR
+        if i == 10000: print("error")
+        #TODO ACTION WHEN ERROR
 
-    def draw(self, ships=False):
+    def draw(self, ships_hide=False):
         pygame.draw.rect(self.screen, color, self.rect)
         for i in self.tab:
-            i.draw()
+            i.draw(ships_hide)
 
     def is_pressed(self, poss):
         for i in self.tab:

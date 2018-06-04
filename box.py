@@ -9,10 +9,10 @@ class Box(object):
         self.status = 0
         self.cords = cords
 
-    def draw(self):
-        if self.status == 0:
+    def draw(self, ship_hide = False):
+        if self.status == 0 or ship_hide == True:
             pygame.draw.rect(self.screen, (30, 50, 255), self.rect)
-        elif self.status == 1:
+        elif self.status == 1 :
             pygame.draw.rect(self.screen, (60, 50, 10), self.rect)
 
     def is_pressed(self, poss):
