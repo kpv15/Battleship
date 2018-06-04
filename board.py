@@ -1,7 +1,8 @@
 import pygame
 from random import randint
-from box import Box
+from box import Box , BoxStatus
 from ship import Ship
+
 
 box_number = 10
 space_width = 4
@@ -26,9 +27,10 @@ class Board(object):
                         self.screen, (col, row)) for col in range(box_number) for row in range(box_number)]
 
         #print(self.tab)
-        self.ships_list = [Ship(5 - i) for i in range(1, 5) for j in range(i)]
+        self.ships_list = [Ship(5 - i,self.msg) for i in range(1, 5) for j in range(i)]
         self.init = 0
         self.s_num = 1
+        self.all_ships_destroyed = False
         self.prev_size_last = self.ships_list[self.init].size
 
     def set_ship(self):
@@ -40,16 +42,16 @@ class Board(object):
             self.prev_size_last = self.ships_list[self.init].size
         self.need_action = False
 
-    def set_ship_pressed(self):
+    def set_ship_pressed(self,msg_flag=True):
         self.need_action = True
         if self.init != len(self.ships_list):
             for i in self.tab:
-                if i.cords == self.last_pressed:
+                if i == self.last_pressed:
                     b = i
                     break
 
-            if b.status == 0:
-                self.ships_list[self.init].add(b, self.tab)
+            if b.status == BoxStatus.FREE:
+                self.ships_list[self.init].add(b, self.tab,msg_flag)
                 if self.ships_list[self.init].full():
                     self.init += 1
                     self.s_num += 1
@@ -63,9 +65,9 @@ class Board(object):
         flag = True
         i = 0
         while flag and i < 10000:
-            self.last_pressed = randint(0, box_number - 1), randint(0, box_number - 1)
+            self.last_pressed = self.tab[randint(0,len(self.tab)-1)]
             #print(self.last_pressed)
-            flag = self.set_ship_pressed()
+            flag = self.set_ship_pressed(msg_flag=False)
             i += 1
         if i == 10000: print("error")
         # TODO ACTION WHEN ERROR
@@ -77,15 +79,36 @@ class Board(object):
 
     def is_pressed(self, poss):
         for i in self.tab:
-            pressed, cord = i.is_pressed(poss)
+            pressed, last = i.is_pressed(poss)
             if pressed:
-                self.last_pressed = cord
+                self.last_pressed = last
                 return True
         return False
 
-    # FUNCTION HANDLING PLAYER SHOOT RETURN TRUE IF PLAYER HIT
+    # FUNCTION HANDLING PLAYER SHOOT RETURN TRUE IF PLAYER HIT OR MISS AGAIN THE SAME BOX
     def player_shoot(self):
-        pass
+        print(self.last_pressed.status)
+        if self.last_pressed.status == BoxStatus.FREE:
+            self.last_pressed.status = BoxStatus.MISS
+            return False
+        elif self.last_pressed.status == BoxStatus.SHIP:
+            self.last_pressed.status = BoxStatus.HIT
+            self.check_condition()
+            return True
+        elif self.last_pressed.status == BoxStatus.HIT or self.last_pressed.status == BoxStatus.DESTROYED \
+                or self.last_pressed.status == BoxStatus.MISS:
+            self.msg.set_tmp("box was shooted befor try again",1000)
+            return False
+        return True
+
+    def check_condition(self):
+        number = 0
+        for i in self.ships_list:
+            if not i.check_condition():
+                number+=1
+        print(number)
+        if number == len(self.ships_list):
+            self.all_ships_destroyed = True
 
     # FUNCTION HANDLING CPU SHOOT RETURN TRUE IF CPU HIT
     def cpu_shoot(self):
