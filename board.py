@@ -1,7 +1,7 @@
 import pygame
 from random import randint
 from box import Box, BoxStatus
-from venv2.ship import Ship
+from ship import Ship
 
 box_number = 10
 space_width = 4
